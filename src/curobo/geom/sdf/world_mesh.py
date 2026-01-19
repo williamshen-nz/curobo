@@ -164,12 +164,18 @@ class WorldMeshCollision(WorldPrimitiveCollision):
         Returns:
             loaded mesh data.
         """
-        if mesh.name not in self._wp_mesh_cache:
-            # load mesh into cache:
-            self._wp_mesh_cache[mesh.name] = self._load_mesh_to_warp(mesh)
-            # return self._wp_mesh_cache[mesh.name]
-        else:
-            log_warn("Object already in warp cache, using existing instance for: " + mesh.name)
+        if mesh.name in self._wp_mesh_cache:
+            log_warn("Object already in warp cache, overwriting")
+            del self._wp_mesh_cache[mesh.name]
+
+        self._wp_mesh_cache[mesh.name] = self._load_mesh_to_warp(mesh)
+
+        # if mesh.name not in self._wp_mesh_cache:
+        #     # load mesh into cache:
+        #     self._wp_mesh_cache[mesh.name] = self._load_mesh_to_warp(mesh)
+        #     # return self._wp_mesh_cache[mesh.name]
+        # else:
+        #     log_warn("Object already in warp cache, using existing instance for: " + mesh.name)
         return self._wp_mesh_cache[mesh.name]
 
     def _load_batch_mesh_to_warp(self, mesh_list: List[Mesh]) -> List:
