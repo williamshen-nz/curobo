@@ -53,12 +53,16 @@ def _so_files_up_to_date(ext_names: list[str]) -> bool:
 
 
 class BuildExtensionWithFingerprint(BuildExtension):
-    """Writes a source fingerprint after a successful CUDA build for cache invalidation."""
+    """Manages a source fingerprint file for CUDA build cache invalidation.
+
+    Deletes the fingerprint before building and rewrites it after success, so
+    an interrupted build always invalidates the cache on the next run.
+    """
 
     def run(self):
+        _FINGERPRINT_FILE.unlink(missing_ok=True)
         super().run()
-        fingerprint = _source_fingerprint()
-        _FINGERPRINT_FILE.write_text(fingerprint + "\n")
+        _FINGERPRINT_FILE.write_text(_source_fingerprint() + "\n")
 
 
 extra_cuda_args = {
